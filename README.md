@@ -1,6 +1,6 @@
 # APIs Rest com Asp.NET Core 2.1 Parte 2: Consumindo nossa API
 
-## Faça esse curso de .NET API e:
+** Faça esse curso de .NET API e:
 - Saiba como consumir APIs Rest pelo C#
 - Consuma APIs Rest com autenticação JWT
 - Aprenda a enviar requisições HTTP usando a classe HttpClient
