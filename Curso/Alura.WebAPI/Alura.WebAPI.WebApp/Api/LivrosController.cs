@@ -6,14 +6,15 @@ using Alura.ListaLeitura.Modelos;
 using Alura.ListaLeitura.Persistencia;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Formatters;
+
+// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Alura.WebAPI.WebApp.Api
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class LivrosController : ControllerBase
+    public class LivrosController : Controller
     {
         private readonly IRepository<Livro> _repo;
 
@@ -37,16 +38,17 @@ namespace Alura.WebAPI.WebApp.Api
             {
                 return NotFound();
             }
+
             return Ok(model.ToApi());
         }
 
-        [HttpGet("{id}/capa")]
+        [HttpGet("capa/{id}")]
         public IActionResult ImagemCapa(int id)
         {
             byte[] img = _repo.All
-                .Where(l => l.Id == id)
-                .Select(l => l.ImagemCapa)
-                .FirstOrDefault();
+                 .Where(l => l.Id == id)
+                 .Select(l => l.ImagemCapa)
+                 .FirstOrDefault();
             if (img != null)
             {
                 return File(img, "image/png");
@@ -62,8 +64,9 @@ namespace Alura.WebAPI.WebApp.Api
                 var livro = model.ToLivro();
                 _repo.Incluir(livro);
                 var uri = Url.Action("Recuperar", new { id = livro.Id });
-                return Created(uri, livro); //201
+                return Created(uri, livro);
             }
+
             return BadRequest();
         }
 
@@ -95,7 +98,15 @@ namespace Alura.WebAPI.WebApp.Api
                 return NotFound();
             }
             _repo.Excluir(model);
-            return NoContent(); //203
+            return NoContent(); //204
+        }
+
+        // GET: /<controller>/
+        public IActionResult Index()
+        {
+           throw new NotImplementedException();
+
+           // return View();
         }
     }
 }

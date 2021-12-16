@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
+// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
 namespace Alura.ListaLeitura.Services
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class LoginController : ControllerBase
+    public class LoginController : Controller
     {
         private readonly SignInManager<Usuario> _signInManager;
 
@@ -30,7 +32,8 @@ namespace Alura.ListaLeitura.Services
                 var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, true, true);
                 if (result.Succeeded)
                 {
-                    //cria token (header + payload >> direitos + signature)
+                    // cria token (header + payload + signature)
+
                     var direitos = new[]
                     {
                         new Claim(JwtRegisteredClaimNames.Sub, model.Login),
@@ -46,13 +49,15 @@ namespace Alura.ListaLeitura.Services
                         claims: direitos,
                         signingCredentials: credenciais,
                         expires: DateTime.Now.AddMinutes(30)
-                    );
+                        );
 
                     var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
                     return Ok(tokenString);
                 }
                 return Unauthorized(); //401
             }
+
             return BadRequest(); //400
         }
     }

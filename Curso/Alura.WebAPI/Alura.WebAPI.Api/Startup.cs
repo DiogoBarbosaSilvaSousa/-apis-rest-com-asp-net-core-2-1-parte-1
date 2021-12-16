@@ -24,6 +24,8 @@ namespace Alura.WebAPI.Api
             Configuration = config;
         }
 
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<LeituraContext>(options => {
@@ -36,11 +38,14 @@ namespace Alura.WebAPI.Api
                 options.OutputFormatters.Add(new LivroCsvFormatter());
             }).AddXmlSerializerFormatters();
 
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = "JwtBearer";
                 options.DefaultChallengeScheme = "JwtBearer";
-            }).AddJwtBearer("JwtBearer", options => {
+
+            }).AddJwtBearer("JwtBearer", options =>
+            {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -55,6 +60,7 @@ namespace Alura.WebAPI.Api
             });
         }
 
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -65,6 +71,11 @@ namespace Alura.WebAPI.Api
             app.UseAuthentication();
 
             app.UseMvc();
+
+            app.Run(async (context) =>
+            {
+                await context.Response.WriteAsync("Hello World!");
+            });
         }
     }
 }

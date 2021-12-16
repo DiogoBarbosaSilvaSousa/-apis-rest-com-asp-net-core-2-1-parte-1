@@ -11,11 +11,11 @@ namespace Alura.ListaLeitura.Api.Formatters
 {
     public class LivroCsvFormatter : TextOutputFormatter
     {
-
         public LivroCsvFormatter()
         {
             var textCsvMediaType = MediaTypeHeaderValue.Parse("text/csv");
             var appCsvMediaType = MediaTypeHeaderValue.Parse("application/csv");
+
             SupportedMediaTypes.Add(textCsvMediaType);
             SupportedMediaTypes.Add(appCsvMediaType);
             SupportedEncodings.Add(Encoding.UTF8);
@@ -24,22 +24,22 @@ namespace Alura.ListaLeitura.Api.Formatters
         protected override bool CanWriteType(Type type)
         {
             return type == typeof(LivroApi);
-        }
+        } 
 
         public override Task WriteResponseBodyAsync(OutputFormatterWriteContext context, Encoding selectedEncoding)
         {
-            var livroEmCsv = "";
+            var livrosEmCsv = "";
 
-            if (context.Object is LivroApi)
+            if(context.Object is LivroApi)
             {
                 var livro = context.Object as LivroApi;
 
-                livroEmCsv = $"{livro.Titulo};{livro.Subtitulo};{livro.Autor};{livro.Lista}";
+                livrosEmCsv = $"{livro.Titulo};{livro.Subtitulo};{livro.Autor};{livro.Lista}";
             }
 
-            using (var escritor = context.WriterFactory(context.HttpContext.Response.Body, selectedEncoding))
+            using(var escritor = context.WriterFactory(context.HttpContext.Response.Body, selectedEncoding ))
             {
-                return escritor.WriteAsync(livroEmCsv);
+                return escritor.WriteAsync(livrosEmCsv);
             } //escritor.Close()
         }
     }
