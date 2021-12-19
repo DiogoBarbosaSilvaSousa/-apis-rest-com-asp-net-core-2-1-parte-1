@@ -8,14 +8,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Lista = Alura.ListaLeitura.Modelos.ListaLeitura;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Alura.ListaLeitura.Api.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class ListasLeituraController : Controller
+    public class ListasLeituraController : ControllerBase
     {
         private readonly IRepository<Livro> _repo;
 
@@ -29,7 +27,10 @@ namespace Alura.ListaLeitura.Api.Controllers
             return new Lista
             {
                 Tipo = tipo.ParaString(),
-                Livros = _repo.All.Where(l => l.Lista == tipo).Select(l => l.ToApi()).ToList()
+                Livros = _repo.All
+                    .Where(l => l.Lista == tipo)
+                    .Select(l => l.ToApi())
+                    .ToList()
             };
         }
 
@@ -39,7 +40,6 @@ namespace Alura.ListaLeitura.Api.Controllers
             Lista paraLer = CriaLista(TipoListaLeitura.ParaLer);
             Lista lendo = CriaLista(TipoListaLeitura.Lendo);
             Lista lidos = CriaLista(TipoListaLeitura.Lidos);
-
             var colecao = new List<Lista> { paraLer, lendo, lidos };
             return Ok(colecao);
         }
@@ -47,13 +47,6 @@ namespace Alura.ListaLeitura.Api.Controllers
         [HttpGet("{tipo}")]
         public IActionResult Recuperar(TipoListaLeitura tipo)
         {
-            var header = this.HttpContext.Request.Headers;
-
-            if(!header.ContainsKey("Authorization") || !(header["Authorization"]=="123"))
-            {
-                return StatusCode(401);
-            }
-
             var lista = CriaLista(tipo);
             return Ok(lista);
         }
