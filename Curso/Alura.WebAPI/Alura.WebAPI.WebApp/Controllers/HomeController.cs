@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
-using System;
 
 namespace Alura.ListaLeitura.WebApp.Controllers
 {
@@ -29,12 +28,8 @@ namespace Alura.ListaLeitura.WebApp.Controllers
         public async Task<IActionResult> Index()
         {
 
-            //mas como recuperar?
-
-
-            //problema é que não tenho a propriedade HttpContext na classe LivroApiClient. E agora?
-
-
+           var token = HttpContext.User.Claims.First(c => c.Type == "Token").Value;
+            System.Console.WriteLine($"TOKEN: {token}");
 
             var model = new HomeViewModel
             {

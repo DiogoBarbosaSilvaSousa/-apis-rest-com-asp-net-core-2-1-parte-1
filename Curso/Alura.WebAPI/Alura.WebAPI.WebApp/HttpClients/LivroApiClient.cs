@@ -13,22 +13,23 @@ namespace Alura.ListaLeitura.HttpClients
     public class LivroApiClient
     {
         private readonly HttpClient _httpClient;
-        private readonly IHttpContextAccessor _acessor;
+        private readonly IHttpContextAccessor _accessor;
 
         public LivroApiClient(HttpClient client, IHttpContextAccessor accessor)
         {
             _httpClient = client;
-            _acessor = accessor;
+            _accessor = accessor;
         }
 
         private void AddBearerToken()
         {
-            var token = _acessor.HttpContext.User.Claims.First(c => c.Type == "Token").Value;
+            var token = _accessor.HttpContext.User.Claims.First(c => c.Type == "Token").Value;
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
         public async Task<byte[]> GetCapaLivroAsync(int id)
         {
+
             AddBearerToken();
 
             var resposta = await _httpClient.GetAsync($"livros/{id}/capa");
@@ -47,6 +48,7 @@ namespace Alura.ListaLeitura.HttpClients
         public async Task DeleteLivroAsync(int id)
         {
             AddBearerToken();
+
             var resposta = await _httpClient.DeleteAsync($"livros/{id}");
             resposta.EnsureSuccessStatusCode();
             if (resposta.StatusCode != System.Net.HttpStatusCode.NoContent)
@@ -70,6 +72,7 @@ namespace Alura.ListaLeitura.HttpClients
         public async Task PutLivroAsync(LivroUpload livro)
         {
             AddBearerToken();
+
             HttpContent content = CreateMultipartContent(livro.ToLivro());
             var resposta = await _httpClient.PutAsync("livros", content);
             resposta.EnsureSuccessStatusCode();
@@ -124,7 +127,7 @@ namespace Alura.ListaLeitura.HttpClients
 
         public async Task<Lista> GetListaLeituraAsync(TipoListaLeitura tipo)
         {
-            AddBearerToken();
+             AddBearerToken();
 
             var resposta = await _httpClient.GetAsync($"listasleitura/{tipo}");
             resposta.EnsureSuccessStatusCode();

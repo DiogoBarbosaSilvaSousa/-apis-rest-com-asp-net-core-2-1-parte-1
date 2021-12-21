@@ -1,5 +1,7 @@
 ﻿using Alura.ListaLeitura.Seguranca;
-using System.Net;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -7,14 +9,8 @@ namespace Alura.ListaLeitura.HttpClients
 {
     public class LoginResult
     {
-        public string Token { get; set; }
         public bool Succeeded { get; set; }
-
-        public LoginResult(string token, HttpStatusCode statusCode)
-        {
-            Token = token;
-            Succeeded = (statusCode == HttpStatusCode.OK);
-        }
+        public string Token { get; set; }
     }
 
     public class AuthApiClient
@@ -28,14 +24,14 @@ namespace Alura.ListaLeitura.HttpClients
 
         public async Task<LoginResult> PostLoginAsync(LoginModel model)
         {
-            var resposta = await _httpClient.PostAsJsonAsync<LoginModel>("login", model);
-            return new LoginResult(await resposta.Content.ReadAsStringAsync(), resposta.StatusCode);
-        }
+            var resposta = await _httpClient.PostAsJsonAsync("login", model);
 
-        public async Task PostRegisterAsync(RegisterViewModel model)
-        {
-            var resposta = await _httpClient.PostAsJsonAsync<RegisterViewModel>("usuarios", model);
-            resposta.EnsureSuccessStatusCode();
+            return new LoginResult
+            {
+                Succeeded = resposta.IsSuccessStatusCode,
+                Token = await resposta.Content.ReadAsStringAsync()
+            };
+
         }
     }
 }
